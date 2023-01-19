@@ -1,5 +1,9 @@
 package org.example;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class Circo {
     public String nom_dpt;
     public String code_dpt;
@@ -8,7 +12,7 @@ public class Circo {
     public int num_circ;
     public String code_reg;
     public String coordinate;
-
+    public Connection cn;
     public Circo(String nom_dpt, String code_dpt, String id, String nom_region, int num_circ, String code_reg, String coordinate) {
         this.nom_dpt = nom_dpt;
         this.code_dpt = code_dpt;
@@ -19,11 +23,11 @@ public class Circo {
         this.coordinate = coordinate;
     }
 
-    public Circo() {
-
+    public Circo(Connection cn) {
+        this.cn = cn;
     }
 
-    public Circo(String[] str){
+    public Circo(String[] str, Connection cn){
         this.id=str[0];
         this.code_dpt=str[1];
         this.nom_dpt=str[2];
@@ -31,7 +35,7 @@ public class Circo {
         this.num_circ=Integer.parseInt(str[4]);
         this.code_reg=str[5];
         this.coordinate = str[6];
-
+        this.cn = cn;
     }
 
     public String getNom_dpt() {
@@ -102,4 +106,26 @@ public class Circo {
                 ", coordinate='" + coordinate + '\'' +
                 '}';
     }
+    public boolean upload() {
+        String sql ="INSERT INTO `circonscription_desc`(`nom_dpt`, `code_dpt`, `id`, `nom_region`, `num_circ`, `code_reg`, `coordinate`) VALUES (?,?,?,?,?,?,?)";
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = cn.prepareStatement(sql);
+            preparedStatement.setString(1,nom_dpt);
+            preparedStatement.setString(2,code_dpt);
+            preparedStatement.setString(3,id);
+            preparedStatement.setString(4,nom_region);
+            preparedStatement.setInt(5,num_circ);
+            preparedStatement.setString(6,code_reg);
+            preparedStatement.setString(7,coordinate);
+            return preparedStatement.execute();
+
+        } catch (SQLException e) {
+            System.out.println(this);
+            Main.issue.add(this);
+            System.err.println(e);
+        }
+        return false;
+    }
+
 }
