@@ -47,6 +47,9 @@ public class Main {
             System.out.println(" ");
             System.out.println(circoProb.get(0));
             System.out.println("done");
+            for(Party party : parties){
+                System.out.println(party.toString());
+            }
         } catch (SQLException e) {
             System.out.println("Erreur");
             e.printStackTrace();
