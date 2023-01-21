@@ -2,7 +2,10 @@ package org.example;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Circo {
     public String nom_dpt;
@@ -13,6 +16,7 @@ public class Circo {
     public String code_reg;
     public String coordinate;
     public Connection cn;
+    public ArrayList<Candidate> listCandidates = new ArrayList<>();
     public Circo(String nom_dpt, String code_dpt, String id, String nom_region, int num_circ, String code_reg, String coordinate) {
         this.nom_dpt = nom_dpt;
         this.code_dpt = code_dpt;
@@ -94,18 +98,6 @@ public class Circo {
         this.coordinate = coordinate;
     }
 
-    @Override
-    public String toString() {
-        return "Circo{" +
-                "nom_dpt='" + nom_dpt + '\'' +
-                ", code_dpt='" + code_dpt + '\'' +
-                ", id=" + id +
-                ", nom_region='" + nom_region + '\'' +
-                ", num_circ=" + num_circ +
-                ", code_reg=" + code_reg +
-                ", coordinate='" + coordinate + '\'' +
-                '}';
-    }
     public boolean upload() {
         String sql ="INSERT INTO `circonscription_desc`(`nom_dpt`, `code_dpt`, `id`, `nom_region`, `num_circ`, `code_reg`, `coordinate`) VALUES (?,?,?,?,?,?,?)";
         PreparedStatement preparedStatement = null;
@@ -127,5 +119,78 @@ public class Circo {
         }
         return false;
     }
+    public boolean getCandidate(){
+        String sql ="SELECT nuancefilles.nomMere,nuancefilles.nomFille, monde.Prénom, monde.Nom,gouv2.nuance, gouv2.voix, gouv2.voixIns,gouv2.voixExp,gouv2.siege FROM `monde` inner join unitedpartiestable on unitedpartiestable.monde_id = monde.id inner join nuancefilles on nuancefilles.nomFille = unitedpartiestable.nameParty inner join gouv2 on gouv2.nom = monde.Nom and monde.Prénom=gouv2.prenom and `monde`.`Nuance Ministère`=gouv2.nuance where monde.Département=? and `monde`.`Numéro Circonscription` = ?";
+        try {
+            PreparedStatement preparedStatement = cn.prepareStatement(sql);
+            preparedStatement.setString(1,code_dpt);
+            preparedStatement.setString(2,""+num_circ);
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Candidate candidate = new Candidate();
+                listCandidates.add(candidate);
+                String mere = rs.getString(1);
+                candidate.group = containGroup(mere);
+                String party = rs.getString(2);
+                candidate.party = containParty(party);
+                candidate.prenom = rs.getString(3);
+                candidate.nom = rs.getString(4);
+                candidate.nuanceMin = rs.getString(5);
+                candidate.voix = rs.getInt(6);
+                candidate.voixIns = rs.getFloat(7);
+                candidate.voixExp = rs.getFloat(8);
+                String elue = rs.getString(9);
+                Boolean elected = false;
+                if(elue != null){
+                    if(!elue.isBlank()){
+                        elected = true;
+                    }
+                }
+                candidate.siege = elected;
+            }
+            return true;
 
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+    public static Group containGroup(String str){
+        for(Group group : Main.groupes){
+            if(group.name.equals(str)){
+                return group;
+            }
+        }
+        Group group = new Group(str);
+        Main.groupes.add(group);
+        return group;
+    }
+    public static Party containParty(String str){
+        for(Party party : Main.parties){
+            if(party.nom.equals(str)){
+                return party;
+            }
+        }
+        Party party = new Party(str);
+        Main.parties.add(party);
+        return party;
+    }
+
+    @Override
+    public String toString() {
+        String str ="Circo{" +
+                "nom_dpt='" + nom_dpt + '\'' +
+                ", code_dpt='" + code_dpt + '\'' +
+                ", id='" + id + '\'' +
+                ", nom_region='" + nom_region + '\'' +
+                ", num_circ=" + num_circ +
+                ", code_reg='" + code_reg + '\'' +
+                ", coordinate='" + coordinate + '\'' +
+                ", cn=" + cn +
+                ", listCandidates=";
+                for(Candidate candidate : listCandidates){
+                    str+=" "+candidate.toString();
+                }
+                str +='}';
+                return  str;
+    }
 }
