@@ -16,6 +16,7 @@ public class Circo {
     public String code_reg;
     public String coordinate;
     public Connection cn;
+    public ArrayList<Candidate> selected = new ArrayList<>();
     public ArrayList<Candidate> listCandidates = new ArrayList<>();
     public Circo(String nom_dpt, String code_dpt, String id, String nom_region, int num_circ, String code_reg, String coordinate) {
         this.nom_dpt = nom_dpt;
@@ -25,6 +26,7 @@ public class Circo {
         this.num_circ = num_circ;
         this.code_reg = code_reg;
         this.coordinate = coordinate;
+        this.selected = new ArrayList<>();
     }
 
     public Circo(Connection cn) {
@@ -120,7 +122,7 @@ public class Circo {
         return false;
     }
     public boolean getCandidate(){
-        String sql ="SELECT nuancefilles.nomMere,nuancefilles.nomFille, monde.Prénom, monde.Nom,gouv2.nuance, gouv2.voix, gouv2.voixIns,gouv2.voixExp,gouv2.siege FROM `monde` inner join unitedpartiestable on unitedpartiestable.monde_id = monde.id inner join nuancefilles on nuancefilles.nomFille = unitedpartiestable.nameParty inner join gouv2 on gouv2.nom = monde.Nom and monde.Prénom=gouv2.prenom and `monde`.`Nuance Ministère`=gouv2.nuance where monde.Département=? and `monde`.`Numéro Circonscription` = ?";
+        String sql ="SELECT nuancefilles.nomMere,nuancefilles.nomFille, monde.Prénom, monde.Nom,gouv2.nuance, gouv2.voix, gouv2.voixIns,gouv2.voixExp,gouv2.siege FROM `monde` inner join unitedpartiestable on unitedpartiestable.monde_id = monde.id inner join nuancefilles on nuancefilles.nomFille = unitedpartiestable.nameParty inner join gouv2 on gouv2.nom = monde.Nom and monde.Prénom=gouv2.prenom and `monde`.`Nuance Ministère`=gouv2.nuance where monde.`Département`=? and `monde`.`Numéro Circonscription` = ?";
         try {
             PreparedStatement preparedStatement = cn.prepareStatement(sql);
             preparedStatement.setString(1,code_dpt);
@@ -185,12 +187,18 @@ public class Circo {
                 ", num_circ=" + num_circ +
                 ", code_reg='" + code_reg + '\'' +
                 ", coordinate='" + coordinate + '\'' +
-                ", cn=" + cn +
                 ", listCandidates=";
                 for(Candidate candidate : listCandidates){
-                    str+=" "+candidate.toString();
+                    str+=" \n"+candidate.toString();
                 }
                 str +='}';
                 return  str;
+    }
+    public void setSelected(String str){
+        for(Candidate candidate : listCandidates){
+            if(candidate.group.name.equals(str)){
+                selected.add(candidate);
+            }
+        }
     }
 }
