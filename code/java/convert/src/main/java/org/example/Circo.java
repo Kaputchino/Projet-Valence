@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class Circo{
     public String nom_dpt;
@@ -195,6 +194,7 @@ public class Circo{
                 return  str;
     }
     public void setSelected(String str){
+        selected.clear();
         for(Candidate candidate : listCandidates){
             if(candidate.group.name.equals(str)){
                 selected.add(candidate);
@@ -202,6 +202,8 @@ public class Circo{
         }
     }
     public String jsonizedSelected(){
+        System.out.println(selected.size());
+
         if(selected.size()>0){
             if(selected.size()>1){
                 String str=" ,\"color\": \"#000000\"";

@@ -40,6 +40,7 @@ public class Main {
                     circoProb.add(circo);
                 }
             }
+            writeJS("NUPES");
             System.out.println(circos.get(0).selected.get(0).jsonize());
 
         } catch (SQLException e) {
@@ -48,20 +49,45 @@ public class Main {
         }
 
     }
-    private static void writeJS(String name, String group){
+    private static void writeJS(String group){
         try {
             for(Circo circo : circos){
                 circo.setSelected(group);
             }
             BufferedReader br = new BufferedReader(new FileReader("circo2.js"));
-            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(name)));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(group+"Circo.js")));
             String str="";
             int i=1;
             while((str=br.readLine())!=null){
-                if(i>3){
+                if(i==4){
+                    getDepCirco(str);
+                    String newStr = "";
+                    String[] split = str.split("\\{");
+                    Boolean content = false;
+                    int j = 0;
+                    Circo c = find(getDepCirco(str));
+                    for(String string : split){
+                        if(j==2){
+                            String[] elements = string.split(",");
+                            elements[2] += c.jsonizedSelected();
+                            String st ="";
+                            for(String el : elements){
+                                st+=","+el;
+                            }
+                            newStr += "{"+st.substring(1);
+                        }else{
+                            newStr += "{"+string;
+
+                        }
+                        j++;
+
+                    }
+                    newStr = newStr.substring(1);
                     //modify line
                     bw.write(str);
                     bw.newLine();
+                    bw.write(newStr);
+                    bw.close();
                 }
                 i++;
             }
@@ -119,6 +145,24 @@ public class Main {
     public static String cleanString(String element){
         String[] tab = element.split("\"");
         return tab[1];
+    }
+    public static Circo find(PlaceHolderStringInt phsi){
+        for(Circo circo1: circos){
+            if(circo1.num_circ==phsi.anInt){
+                if(phsi.string.equals(circo1.code_dpt)){
+                    return circo1;
+                }
+            }
+        }
+        return null;
+    }
+    public static PlaceHolderStringInt getDepCirco(String line){
+        PlaceHolderStringInt placeHolderStringInt = new PlaceHolderStringInt();
+        String[] elements = line.split(":");
+        placeHolderStringInt.string = elements[4].split(",")[0].split("\"")[1];
+        String circ = elements[7].split("\"")[1];
+        placeHolderStringInt.anInt = Integer.parseInt(circ);
+        return placeHolderStringInt;
     }
 
 }
