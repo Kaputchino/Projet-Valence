@@ -39,6 +39,26 @@ public class Candidate {
                 ", voixIns=" + voixIns +
                 ", voixExp=" + voixExp +
                 ", siege=" + siege +
-                '}';
+                 '}';
+    }
+    public String jsonize(){
+        String str="";
+        str+=" ,\"Group\": \""+group.name+"\"";
+        str+=" ,\"Party\": \""+party.nom+"\"";
+        str+=" ,\"Nom\": \""+nom+"\"";
+        str+=" ,\"Prenom\": \""+prenom+"\"";
+        str+=" ,\"NuanceMin\": \""+nuanceMin+"\"";
+        str+=" ,\"Voix\": \""+voix+"\"";
+        str+=" ,\"VoixInscrit\": \""+voixIns+"\"";
+        str+=" ,\"VoixExp\": \""+voixExp+"\"";
+        str+=" ,\"color\": \""+party.color+"\"";
+
+        String note=" ";
+        if(siege){
+            note ="Elu au premier tour";
+        }
+        str+=" ,\"Note\": \""+note+"\"";
+
+        return str;
     }
 }

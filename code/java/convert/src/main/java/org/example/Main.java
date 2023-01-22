@@ -40,23 +40,37 @@ public class Main {
                     circoProb.add(circo);
                 }
             }
-            for(Circo circo : circoProb){
-                System.out.println(circo.nom_dpt+" "+circo.code_dpt +" "+circo.num_circ +" "+circo.listCandidates.size());
-            }
-            System.out.println(" ");
-            System.out.println(" ");
-            System.out.println(circoProb.get(0));
-            System.out.println("done");
-            for(Party party : parties){
-                System.out.println(party.toString());
-            }
+            System.out.println(circos.get(0).selected.get(0).jsonize());
+
         } catch (SQLException e) {
             System.out.println("Erreur");
             e.printStackTrace();
         }
 
     }
-
+    private static void writeJS(String name, String group){
+        try {
+            for(Circo circo : circos){
+                circo.setSelected(group);
+            }
+            BufferedReader br = new BufferedReader(new FileReader("circo2.js"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(name)));
+            String str="";
+            int i=1;
+            while((str=br.readLine())!=null){
+                if(i>3){
+                    //modify line
+                    bw.write(str);
+                    bw.newLine();
+                }
+                i++;
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     private static void readJS(Connection cn) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader("circo2.js"));
         String str="";

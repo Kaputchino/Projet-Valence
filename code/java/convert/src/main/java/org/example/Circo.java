@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class Circo {
+public class Circo{
     public String nom_dpt;
     public String code_dpt;
     public String id;
@@ -201,4 +201,16 @@ public class Circo {
             }
         }
     }
+    public String jsonizedSelected(){
+        if(selected.size()>0){
+            if(selected.size()>1){
+                String str=" ,\"color\": \"#000000\"";
+                return str;
+            }
+            return selected.get(0).jsonize();
+        }
+        String str=" ,\"color\": \"#898989\"";
+        return str;
+    }
+
 }
