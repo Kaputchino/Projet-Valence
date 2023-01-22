@@ -50,6 +50,7 @@ public class Main {
             writeJS("LRDP");
             writeJS("TUPV");
             writeJS("UPF");
+            writeJS("EMP");
 
             writeJS("Tribune sur l’Europe");
 
