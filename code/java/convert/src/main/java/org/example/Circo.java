@@ -202,15 +202,16 @@ public class Circo{
         }
     }
     public String jsonizedSelected(){
-        System.out.println(selected.size());
-
         if(selected.size()>0){
             if(selected.size()>1){
+                System.out.println("trop "+this.nom_dpt+this.num_circ);
                 String str=" ,\"color\": \"#000000\"";
                 return str;
             }
             return selected.get(0).jsonize();
         }
+        System.out.println("pas assez "+this.nom_dpt+this.num_circ);
+
         String str=" ,\"color\": \"#898989\"";
         return str;
     }

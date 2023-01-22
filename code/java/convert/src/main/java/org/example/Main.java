@@ -30,18 +30,30 @@ public class Main {
             ArrayList<Circo> circoProb = new ArrayList<>();
             for(Circo circo : circos){
                 if(!circo.getCandidate()){
-                    System.out.println(circo.getCode_dpt()+" "+circo.getNum_circ());
                 }
-
-                circo.setSelected("NUPES");
                 if(circo.selected.size()==1){
                     //System.out.println(circo.num_circ+" "+circo.nom_dpt);
                 }else{
                     circoProb.add(circo);
+
                 }
             }
             writeJS("NUPES");
-            System.out.println(circos.get(0).selected.get(0).jsonize());
+            writeJS("ENSEMBLE");
+            writeJS("RPS");
+            writeJS("UDC");
+            writeJS("CRIC");
+            writeJS("EAC");
+            writeJS("FGR");
+            writeJS("EAC");
+            writeJS("FPU");
+            writeJS("LRDP");
+            writeJS("TUPV");
+            writeJS("UPF");
+
+            writeJS("Tribune sur l’Europe");
+
+            //System.out.println(circos.get(0).selected.get(0).jsonize());
 
         } catch (SQLException e) {
             System.out.println("Erreur");
@@ -59,7 +71,7 @@ public class Main {
             String str="";
             int i=1;
             while((str=br.readLine())!=null){
-                if(i==4){
+                if(i>4 && i<570){
                     getDepCirco(str);
                     String newStr = "";
                     String[] split = str.split("\\{");
@@ -84,13 +96,17 @@ public class Main {
                     }
                     newStr = newStr.substring(1);
                     //modify line
-                    bw.write(str);
+                    //bw.write(str);
                     bw.newLine();
                     bw.write(newStr);
-                    bw.close();
+                }else{
+                    bw.newLine();
+                    bw.write(str);
                 }
                 i++;
             }
+            bw.close();
+            exportColor(group);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -163,6 +179,22 @@ public class Main {
         String circ = elements[7].split("\"")[1];
         placeHolderStringInt.anInt = Integer.parseInt(circ);
         return placeHolderStringInt;
+    }
+    public static void exportColor(String nom){
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(nom+"Color.json")));
+            String str="[";
+            for (Party party : parties){
+                if(party.nom.toUpperCase().contains(nom.toUpperCase())){
+                    str +="{\"party\": \""+party.nom+"\", \"colors\": \""+party.color+"\"},\n";
+                }
+            }
+            str = str.substring(0,str.length()-2) + "]";
+            bw.write(str);
+            bw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
